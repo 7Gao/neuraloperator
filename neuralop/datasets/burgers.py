@@ -8,7 +8,7 @@ def load_burgers_1d(
     data_path, n_train, n_test, batch_train=32, batch_test=100, time=1, grid=[0, 1]
 ):
 
-    data_path = Path(data_path).joinpath("burgers.pt").as_posix()
+    data_path = Path(data_path).joinpath("burgers_lowres.pt").as_posix()
     data = torch.load(data_path)
 
     x_train = data[0:n_train, :, 0]
