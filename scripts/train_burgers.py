@@ -214,3 +214,97 @@ trainer.train(
 
 if config.wandb.log and is_logger:
     wandb.finish()
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+test_samples = test_loaders['test'].dataset
+fig = plt.figure(figsize=(15, 9))
+x_axs = np.linspace(0, 1, 128)
+for index in range(3):
+    # Input x
+    x = test_samples.x[index]
+    # Ground-truth
+    y = test_samples.y[index]
+    # Model prediction
+    out = model(x.unsqueeze(0))
+
+    y = y.reshape((128, 128))
+    out = out.detach().numpy().reshape((128, 128))
+    ax = fig.add_subplot(3, 5, index*5 + 1)
+    ax.plot(x_axs, y[0], '-')
+    ax.plot(x_axs, out[0])
+    ax.set_ylim([0, 1])
+    if index == 0: 
+        ax.set_title('t = 0')
+    plt.xticks([], [])
+    plt.yticks([], [])
+
+    ax = fig.add_subplot(3, 5, index*5 + 2)
+    ax.plot(x_axs, y[31], '-')
+    ax.plot(x_axs, out[31])
+    ax.set_ylim([0, 1])
+    if index == 0: 
+        ax.set_title('t = 0.25')
+    plt.xticks([], [])
+    plt.yticks([], [])
+
+    ax = fig.add_subplot(3, 5, index*5 + 3)
+    ax.plot(x_axs, y[63], '-')
+    ax.plot(x_axs, out[63])
+    ax.set_ylim([0, 1])
+    if index == 0: 
+        ax.set_title('t = 0.5')
+    plt.xticks([], [])
+    plt.yticks([], [])
+
+    ax = fig.add_subplot(3, 5, index*5 + 4)
+    ax.plot(x_axs, y[95], '-')
+    ax.plot(x_axs, out[95])
+    ax.set_ylim([0, 1])
+    if index == 0: 
+        ax.set_title('t = 0.75')
+    plt.xticks([], [])
+    plt.yticks([], [])
+
+    ax = fig.add_subplot(3, 5, index*5 + 5)
+    ax.plot(x_axs, y[127], '-')
+    ax.plot(x_axs, out[127])
+    ax.set_ylim([0, 1])
+    if index == 0: 
+        ax.set_title('t = 1')
+    plt.xticks([], [])
+    plt.yticks([], [])
+
+fig.suptitle('Ground-truth output and prediction.', y=0.98)
+plt.tight_layout()
+fig.savefig("burgers implicit 1 shock slice example.png")
+
+test_samples = test_loaders['test'].dataset
+fig = plt.figure(figsize=(7, 7))
+for index in range(3):
+    # Input x
+    x = test_samples.x[index]
+    # Ground-truth
+    y = test_samples.y[index]
+    # Model prediction
+    out = model(x.unsqueeze(0))
+
+    ax = fig.add_subplot(3, 2, index*2 + 1)
+    ax.imshow(y.squeeze(), vmin = 0, vmax = 1)
+    if index == 0: 
+        ax.set_title('Ground-truth y')
+    plt.xticks([], [])
+    plt.yticks([], [])
+
+    ax = fig.add_subplot(3, 2, index*2+ 2)
+    ax.imshow(out.squeeze().detach().numpy(), vmax = 1, vmin = 0)
+    if index == 0: 
+        ax.set_title('Model prediction')
+    plt.xticks([], [])
+    plt.yticks([], [])
+
+fig.suptitle('Ground-truth output and prediction.', y=0.98)
+plt.tight_layout()
+fig.savefig("burgers implicit 1 shock example.png")
