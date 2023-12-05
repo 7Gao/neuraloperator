@@ -27,7 +27,7 @@ config_name = pipe.steps[-1].config_name
 
 # Set-up distributed communication, if using
 device, is_logger = setup(config)
-
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # Set up WandB logging
 if config.wandb.log and is_logger:
     wandb.login(key=get_wandb_api_key())
@@ -228,10 +228,10 @@ for index in range(3):
     # Ground-truth
     y = test_samples.y[index]
     # Model prediction
-    out = model(x.unsqueeze(0))
+    out = model(x.to(device).unsqueeze(0))
 
     y = y.reshape((128, 128))
-    out = out.detach().numpy().reshape((128, 128))
+    out = out.to('cpu').detach().numpy().reshape((128, 128))
     ax = fig.add_subplot(3, 5, index*5 + 1)
     ax.plot(x_axs, y[0], '-')
     ax.plot(x_axs, out[0])
@@ -279,7 +279,7 @@ for index in range(3):
 
 fig.suptitle('Ground-truth output and prediction.', y=0.98)
 plt.tight_layout()
-fig.savefig("burgers implicit 1 shock slice example.png")
+fig.savefig("burgers implicit 1 shock slice example 10000 epoch.png")
 
 test_samples = test_loaders['test'].dataset
 fig = plt.figure(figsize=(7, 7))
@@ -289,7 +289,7 @@ for index in range(3):
     # Ground-truth
     y = test_samples.y[index]
     # Model prediction
-    out = model(x.unsqueeze(0))
+    out = model(x.to(device).unsqueeze(0)).to('cpu')
 
     ax = fig.add_subplot(3, 2, index*2 + 1)
     ax.imshow(y.squeeze(), vmin = 0, vmax = 1)
@@ -307,4 +307,4 @@ for index in range(3):
 
 fig.suptitle('Ground-truth output and prediction.', y=0.98)
 plt.tight_layout()
-fig.savefig("burgers implicit 1 shock example.png")
+fig.savefig("burgers implicit 1 shock example 10000 epoch.png")

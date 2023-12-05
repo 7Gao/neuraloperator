@@ -4,7 +4,7 @@ default: &DEFAULT
   # For computing compression
   n_params_baseline: None
   verbose: True
-  arch: 'tfno2d'
+  arch: 'tfno1d'
 
   #Distributed computing
   distributed:
@@ -15,10 +15,9 @@ default: &DEFAULT
     seed: 666
 
   # FNO related
-  tfno2d:
-    data_channels: 3
+  tfno1d:
+    data_channels: 2
     n_modes_height: 15
-    n_modes_width: 15
     hidden_channels: 24
     lifting_channels: 24
     projection_channels: 24
@@ -64,7 +63,6 @@ default: &DEFAULT
 
   # Dataset related
   data:
-    # folder: '/home/ubuntu/data/burgers/burgers.npz' 
     # folder: '/home/qi/Workspace/github/learning-moments-traffic/datas/burgers_pino.mat' 
     # folder: '/home/qi/Workspace/github/learning-moments-traffic/datas/LWR_solution_0.2.mat' 
     folder: '/home/qi/Workspace/github/learning-moments-traffic/datas/burgers_implicit_1shock.mat' 

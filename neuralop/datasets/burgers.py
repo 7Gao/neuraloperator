@@ -8,14 +8,14 @@ def load_burgers_1d(
     data_path, n_train, n_test, batch_train=32, batch_test=100, time=1, grid=[0, 1]
 ):
 
-    data_path = Path(data_path).joinpath("burgers_lowres.pt").as_posix()
-    data = torch.load(data_path)
+    # data_path = Path(data_path).as_posix()
+    # data = torch.load(data_path)
+    data = torch.from_numpy(scipy.io.loadmat(data_path)['output'].astype(np.float32))
+    x_train = data[0:n_train, 0, :]
+    x_test = data[n_train : (n_train + n_test), 0, :]
 
-    x_train = data[0:n_train, :, 0]
-    x_test = data[n_train : (n_train + n_test), :, 0]
-
-    y_train = data[0:n_train, :, time]
-    y_test = data[n_train : (n_train + n_test), :, time]
+    y_train = data[0:n_train, time, :]
+    y_test = data[n_train : (n_train + n_test), time, :]
 
     s = x_train.size(-1)
 
@@ -27,19 +27,23 @@ def load_burgers_1d(
 
         x_train = torch.cat((x_train.unsqueeze(1), grid_train.unsqueeze(1)), 1)
         x_test = torch.cat((x_test.unsqueeze(1), grid_test.unsqueeze(1)), 1)
+        y_train = y_train.unsqueeze(1)
+        y_test = y_test.unsqueeze(1)
 
     train_loader = torch.utils.data.DataLoader(
-        torch.utils.data.TensorDataset(x_train, y_train),
+        TensorDataset(x_train, y_train),
         batch_size=batch_train,
         shuffle=False,
     )
     test_loader = torch.utils.data.DataLoader(
-        torch.utils.data.TensorDataset(x_test, y_test),
+        TensorDataset(x_test, y_test),
         batch_size=batch_test,
         shuffle=False,
     )
 
-    return train_loader, test_loader
+    test_loaders = {'test':test_loader}
+
+    return train_loader, test_loaders
 
 def load_burgers_1dtime(
         data_path, n_train, n_test, batch_size=32, batch_size_test=100, 
