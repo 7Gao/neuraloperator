@@ -49,7 +49,7 @@ default: &DEFAULT
 
   # Optimizer
   opt:
-    n_epochs: 10000
+    n_epochs: 500
     learning_rate: 0.0001
     training_loss: 'l2'
     weight_decay: 1e-4
@@ -67,14 +67,15 @@ default: &DEFAULT
     # folder: '/home/ubuntu/data/burgers/burgers.npz' 
     # folder: '/home/qi/Workspace/github/learning-moments-traffic/datas/burgers_pino.mat' 
     # folder: '/home/qi/Workspace/github/learning-moments-traffic/datas/LWR_solution_0.2.mat' 
-    folder: '/home/qi/Workspace/github/learning-moments-traffic/datas/burgers_implicit_1shock.mat' 
+    # folder: '/home/qi/Workspace/github/learning-moments-traffic/datas/burgers_implicit_1shock.mat' 
+    folder: '/home/qi/Workspace/github/neuraloperator/neuralop/datasets/data/burgers.mat'
     batch_size: 16
     n_train: 800
     test_batch_sizes: [16]
     n_tests: [400]
     spatial_length: 128
-    # temporal_length: 101
-    temporal_length: 128
+    temporal_length: 101
+    # temporal_length: 128
 
     positional_encoding: True
     encode_input: False

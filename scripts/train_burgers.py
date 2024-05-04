@@ -28,6 +28,7 @@ config_name = pipe.steps[-1].config_name
 # Set-up distributed communication, if using
 device, is_logger = setup(config)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# device = torch.device('cpu')
 # Set up WandB logging
 if config.wandb.log and is_logger:
     wandb.login(key=get_wandb_api_key())
@@ -75,7 +76,7 @@ train_loader, test_loaders, output_encoder = load_burgers_1dtime(data_path=confi
         n_test=config.data.n_tests[0], batch_size_test=config.data.test_batch_sizes[0],
         temporal_length=config.data.temporal_length, spatial_length=config.data.spatial_length,
         pad=config.data.get("pad", 0), temporal_subsample=config.data.get("temporal_subsample", 1),
-        spatial_subsample=config.data.get("spatial_subsample", 1),
+        spatial_subsample=config.data.get("spatial_subsample", 1), device=device
         )
 
 model = get_model(config)
@@ -230,12 +231,12 @@ for index in range(3):
     # Model prediction
     out = model(x.to(device).unsqueeze(0))
 
-    y = y.reshape((128, 128))
-    out = out.to('cpu').detach().numpy().reshape((128, 128))
+    y = y.reshape((101, 128)).to('cpu').detach().numpy()
+    out = out.to('cpu').detach().numpy().reshape((101, 128))
     ax = fig.add_subplot(3, 5, index*5 + 1)
     ax.plot(x_axs, y[0], '-')
     ax.plot(x_axs, out[0])
-    ax.set_ylim([0, 1])
+    ax.set_ylim([-1, 1])
     if index == 0: 
         ax.set_title('t = 0')
     plt.xticks([], [])
@@ -244,7 +245,7 @@ for index in range(3):
     ax = fig.add_subplot(3, 5, index*5 + 2)
     ax.plot(x_axs, y[31], '-')
     ax.plot(x_axs, out[31])
-    ax.set_ylim([0, 1])
+    ax.set_ylim([-1, 1])
     if index == 0: 
         ax.set_title('t = 0.25')
     plt.xticks([], [])
@@ -253,7 +254,7 @@ for index in range(3):
     ax = fig.add_subplot(3, 5, index*5 + 3)
     ax.plot(x_axs, y[63], '-')
     ax.plot(x_axs, out[63])
-    ax.set_ylim([0, 1])
+    ax.set_ylim([-1, 1])
     if index == 0: 
         ax.set_title('t = 0.5')
     plt.xticks([], [])
@@ -262,16 +263,16 @@ for index in range(3):
     ax = fig.add_subplot(3, 5, index*5 + 4)
     ax.plot(x_axs, y[95], '-')
     ax.plot(x_axs, out[95])
-    ax.set_ylim([0, 1])
+    ax.set_ylim([-1, 1])
     if index == 0: 
         ax.set_title('t = 0.75')
     plt.xticks([], [])
     plt.yticks([], [])
 
     ax = fig.add_subplot(3, 5, index*5 + 5)
-    ax.plot(x_axs, y[127], '-')
-    ax.plot(x_axs, out[127])
-    ax.set_ylim([0, 1])
+    ax.plot(x_axs, y[100], '-')
+    ax.plot(x_axs, out[100])
+    ax.set_ylim([-1, 1])
     if index == 0: 
         ax.set_title('t = 1')
     plt.xticks([], [])
@@ -289,6 +290,7 @@ for index in range(3):
     # Ground-truth
     y = test_samples.y[index]
     # Model prediction
+    y = y.reshape((101, 128)).to('cpu').detach().numpy()
     out = model(x.to(device).unsqueeze(0)).to('cpu')
 
     ax = fig.add_subplot(3, 2, index*2 + 1)

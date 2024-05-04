@@ -47,17 +47,28 @@ default: &DEFAULT
     joint_factorization: False
 
   # Optimizer
+  # opt:
+  #   n_epochs: 10000
+  #   learning_rate: 0.0001
+  #   training_loss: 'l2'
+  #   weight_decay: 1e-4
+  #   amp_autocast: False
+
+  #   scheduler_T_max: 500 # For cosine only, typically take n_epochs
+  #   scheduler_patience: 100 # For ReduceLROnPlateau only
+  #   scheduler: 'ReduceLROnPlateau' # Or 'CosineAnnealingLR' OR 'ReduceLROnPlateau'
+  #   step_size: 60
+  #   gamma: 0.5
+  #   precision_schedule: None
   opt:
-    n_epochs: 10000
-    learning_rate: 0.0001
+    n_epochs: 500
+    learning_rate: 0.001
     training_loss: 'l2'
     weight_decay: 1e-4
     amp_autocast: False
 
-    scheduler_T_max: 500 # For cosine only, typically take n_epochs
-    scheduler_patience: 100 # For ReduceLROnPlateau only
-    scheduler: 'ReduceLROnPlateau' # Or 'CosineAnnealingLR' OR 'ReduceLROnPlateau'
-    step_size: 60
+    scheduler: 'StepLR' # Or 'CosineAnnealingLR' OR 'ReduceLROnPlateau'
+    step_size: 100
     gamma: 0.5
     precision_schedule: None
 
@@ -65,12 +76,23 @@ default: &DEFAULT
   data:
     # folder: '/home/qi/Workspace/github/learning-moments-traffic/datas/burgers_pino.mat' 
     # folder: '/home/qi/Workspace/github/learning-moments-traffic/datas/LWR_solution_0.2.mat' 
-    folder: '/home/qi/Workspace/github/learning-moments-traffic/datas/burgers_implicit_1shock.mat' 
-    batch_size: 16
+    # folder: '/home/qi/Workspace/github/learning-moments-traffic/datas/burgers_implicit_1shock.mat' 
+    # folder: '/home/qi/Workspace/github/neuraloperator/datas/lwr_shock.mat'
+    folder: '/home/qi/Workspace/github/neuraloperator/datas/burgers_mixed.mat'
+    # folder: '/home/qi/Workspace/github/neuraloperator/datas/burgers_mixed12000.mat'
+    # folder: '/home/qi/Workspace/github/neuraloperator/datas/burgers_mixed_dense.mat'
+    # folder: '/home/qi/Workspace/github/neuraloperator/datas/lwr_mixed.mat'
+    # folder: '/home/qi/Workspace/github/neuraloperator/datas/linear_mixed.mat'
+    batch_size: 200
     n_train: 800
-    test_batch_sizes: [16]
+    test_batch_sizes: [200]
     n_tests: [400]
     spatial_length: 128
+    # batch_size: 400
+    # n_train: 10000
+    # test_batch_sizes: [400]
+    # n_tests: [2000]
+    # spatial_length: 128
     # temporal_length: 101
     temporal_length: 128
 

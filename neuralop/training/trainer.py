@@ -164,7 +164,7 @@ class Trainer:
                     self.callbacks.on_before_loss(out=out)
 
                 loss = 0.
-
+                # breakpoint()
                 if self.overrides_loss:
                     if isinstance(out, torch.Tensor):
                         loss += self.callbacks.compute_training_loss(out=out.float(), **sample, amp_autocast=self.amp_autocast)
@@ -184,10 +184,11 @@ class Trainer:
                             loss += training_loss(**out, **sample)
                 
                 # del out
-
+                # breakpoint()
                 if regularizer:
                     loss += regularizer.loss
-                
+                # breakpoint()
+                # loss = loss.mean()
                 loss.backward()
                 del out
 

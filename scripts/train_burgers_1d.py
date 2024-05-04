@@ -8,7 +8,7 @@ from neuralop import H1Loss, LpLoss, Trainer, get_model
 from neuralop.datasets import load_burgers_1d
 from neuralop.training import setup, MGPatchingCallback, SimpleWandBLoggerCallback
 from neuralop.utils import get_wandb_api_key, count_model_params
-
+import datetime
 
 # Read the configuration
 config_name = "default"
@@ -27,6 +27,7 @@ config_name = pipe.steps[-1].config_name
 # Set-up distributed communication, if using
 device, is_logger = setup(config)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# device = torch.device('cpu')
 # Set up WandB logging
 wandb_init_args = {}
 # Make sure we only print information when needed
@@ -41,7 +42,7 @@ if config.verbose:
 train_loader, test_loaders = load_burgers_1d(data_path=config.data.folder,
         n_train=config.data.n_train, batch_train=config.data.batch_size, 
         n_test=config.data.n_tests[0], batch_test=config.data.test_batch_sizes[0],
-        time=127, grid=[0, 1]
+        time=127, grid=[0, 1], device=device
         )
 
 model = get_model(config)
@@ -160,32 +161,10 @@ trainer.train(
 if config.wandb.log and is_logger:
     wandb.finish()
 
+model_file = "/home/qi/Workspace/github/neuraloperator/trained_model"
+model_name =  job_name = "model_" + datetime.datetime.now().strftime("%y%m%d_%H%M")
+model_file = model_file + "/" + model_name + ".pt"
+torch.save(model.state_dict(), model_file)
 
 
-import matplotlib.pyplot as plt
-import numpy as np
-
-test_samples = test_loaders['test'].dataset
-fig = plt.figure(figsize=(15, 4))
-x_axs = np.linspace(0, 1, 128)
-for index in range(5):
-    # Input x
-    x = test_samples.x[index]
-    # Ground-truth
-    y = test_samples.y[index]
-    # Model prediction
-    out = model(x.to(device).unsqueeze(0))
-    out = out.to('cpu').detach().numpy().reshape((128))
-    y = y.reshape((128))
-    ax = fig.add_subplot(1, 5, index + 1)
-    ax.plot(x_axs, y, '-')
-    ax.plot(x_axs, out)
-    ax.set_ylim([0, 1])
-    plt.xticks([], [])
-    plt.yticks([], [])
-
-
-fig.suptitle('Ground-truth output and prediction.', y=0.98)
-plt.tight_layout()
-fig.savefig("burgers implicit 1 shock 1d example.png")
 

@@ -79,3 +79,10 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# Data
+*.pyc
+*.mat
+
+# checkpoint
+*.pt
